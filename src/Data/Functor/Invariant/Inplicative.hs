@@ -45,10 +45,8 @@ import           Control.Applicative.Backwards               (Backwards(..))
 import           Control.Applicative.Lift                    (Lift(Pure, Other))
 import           Control.Arrow                               (Arrow)
 import           Control.Monad.Trans.Cont                    (ContT)
-import           Control.Monad.Trans.Error                   (ErrorT(..))
 import           Control.Monad.Trans.Except                  (ExceptT(..))
 import           Control.Monad.Trans.Identity                (IdentityT(..))
-import           Control.Monad.Trans.List                    (ListT(..))
 import           Control.Monad.Trans.Maybe                   (MaybeT(..))
 import           Control.Monad.Trans.RWS                     (RWST(..))
 import           Control.Monad.Trans.Reader                  (ReaderT(..))
@@ -301,22 +299,6 @@ instance Inply f => Inply (ExceptT e f) where
 -- | @since 0.4.1.0
 instance Inplicative f => Inplicative (ExceptT e f) where
     knot x = ExceptT (knot (Right x))
-
--- | @since 0.4.1.0
-instance Inply f => Inply (ErrorT e f) where
-    gather f g (ErrorT x) (ErrorT y) = ErrorT $
-      gather (liftA2 f) (funzip . fmap g) x y
--- | @since 0.4.1.0
-instance Inplicative f => Inplicative (ErrorT e f) where
-    knot x = ErrorT (knot (Right x))
-
--- | @since 0.4.1.0
-instance Inply f => Inply (ListT f) where
-    gather f g (ListT x) (ListT y) = ListT $
-      gather (liftA2 f) (funzip . fmap g) x y
--- | @since 0.4.1.0
-instance Inplicative f => Inplicative (ListT f) where
-    knot x = ListT (knot [x])
 
 -- | @since 0.4.1.0
 deriving via WrappedFunctor (RWST r w s m) instance (Bind m, Invariant m, Semigroup w) => Inply (RWST r w s m)

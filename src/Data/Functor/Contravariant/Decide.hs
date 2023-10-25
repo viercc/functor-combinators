@@ -25,7 +25,6 @@ module Data.Functor.Contravariant.Decide (
 import Control.Applicative.Backwards
 import Control.Arrow
 import Control.Monad.Trans.Identity
-import Control.Monad.Trans.List
 import Control.Monad.Trans.Maybe
 import Control.Monad.Trans.Reader
 import Data.Either
@@ -143,9 +142,6 @@ instance Decide m => Decide (Strict.RWST r w s m) where
                                   (Right . betuple3 s' w)
                                   (abc a))
            (rsmb r s) (rsmc r s)
-
-instance Divise m => Decide (ListT m) where
-  decide f (ListT l) (ListT r) = ListT $ divise ((lefts &&& rights) . map f) l r
 
 instance Divise m => Decide (MaybeT m) where
   decide f (MaybeT l) (MaybeT r) = MaybeT $
